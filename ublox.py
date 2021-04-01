@@ -1133,7 +1133,7 @@ ubx_messages_9 = {
              "U1"*5+"I4I2U2",
              0,"",
              [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1e-7,1e-7,1,1,1,1,1,1,1,1,1e-5,1,
-              1e-5,0.01,1,1]+[1]*5+[1e-5,1e-2,1e-2],
+              1e-5,0.01,1]+[1]*5+[1e-5,1e-2,1e-2],
              ["iTOW (ms)", "year (y)", "month (month)", "day (d)", "hour (h)",
               "min (min)", "sec (s)", "valid", "tAcc (ns)", "nano (ns)",
               "fixType", "flags", "flags2", "numSV", "lon (deg)", "lat (deg)",
