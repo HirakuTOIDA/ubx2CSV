@@ -1298,7 +1298,7 @@ ubx_messages_9 = {
               "relPosLength (cm)", "relPosHeading (deg)"]+["reserved2"]*4+ \
              ["relPosHPN (mm)", "relPosHPE (mm)", "relPosHPD (mm)",
               "relPosHPLength (mm)", "accN (mm)", "accE (mm)", "accD (mm)",
-              "accLength (mm)", "accHeading (deg)"]+["reserved3"]*3+["flags"],
+              "accLength (mm)", "accHeading (deg)"]+["reserved3"]*4+["flags"],
              [],
              []],
     # new in ublox 9
