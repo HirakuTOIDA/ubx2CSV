@@ -1524,7 +1524,7 @@ class ublox():
             scalings_var = self.scalings_var * payload_number_var
             scalings += scalings_var
             scalings = np.array(scalings)
-        raw_data = struct.unpack(payload_format, dat)
+        raw_data = struct.unpack("<" + payload_format, dat)
         raw_data = np.array(raw_data)
         scaled_data = raw_data * scalings
         return scaled_data
