@@ -130,3 +130,4 @@ dmypy.json
 execute_pyinstaller_bat_with_Anaconda_Prompt
 ubx2CSV_pyinstaller.bat
 CUI/
+ubx2CSV.bat
