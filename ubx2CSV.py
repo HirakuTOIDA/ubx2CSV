@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+"""GUI for csv convertor of ubx files."""
+
 import os
 import threading
 import tkinter as tk
@@ -6,6 +8,8 @@ import tkinter.filedialog
 import ublox
 
 class Application(tk.Frame):
+    """class for GUI."""
+
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
@@ -31,27 +35,36 @@ class Application(tk.Frame):
         # ボタン
         self.bt = tk.Button(self, text=u'Open & Convert',
                             command = self.fileopen)
-        self.bt.grid(row=self.version_list_len+1, column=0, columnspan=self.version_list_len, padx=_pad[0], pady=_pad[1], sticky=tk.W+tk.E)
+        self.bt.grid(row=self.version_list_len+1, column=0,
+                     columnspan=self.version_list_len,
+                     padx=_pad[0], pady=_pad[1], sticky=tk.W+tk.E)
 
         # ラベル
         self.filename_str = tk.StringVar()
         self.filename_str.set(u"File name: ")
         self.lbfn = tk.Label(self, textvariable=self.filename_str)
-        self.lbfn.grid(row=self.version_list_len+2, column=0, columnspan=int(self.version_list_len/2), padx=_pad[0], pady=_pad[1], sticky=tk.W)
+        self.lbfn.grid(row=self.version_list_len+2, column=0,
+                       columnspan=int(self.version_list_len/2),
+                       padx=_pad[0], pady=_pad[1], sticky=tk.W)
 
         # ラベル
         self.filesize_str = tk.StringVar()
         self.filesize_str.set(u"File size: ")
         self.lbfs = tk.Label(self, textvariable=self.filesize_str)
-        self.lbfs.grid(row=self.version_list_len+3, column=0, columnspan=int(self.version_list_len/2), padx=_pad[0], pady=_pad[1], sticky=tk.W)
+        self.lbfs.grid(row=self.version_list_len+3, column=0,
+                       columnspan=int(self.version_list_len/2),
+                       padx=_pad[0], pady=_pad[1], sticky=tk.W)
 
         # ラベル
         self.status_str = tk.StringVar()
         self.status_str.set(u"Select file.")
         self.lbst = tk.Label(self, textvariable=self.status_str)
-        self.lbst.grid(row=self.version_list_len+4, column=0, columnspan=int(self.version_list_len/2), padx=_pad[0], pady=_pad[1], sticky=tk.W)
+        self.lbst.grid(row=self.version_list_len+4, column=0,
+                       columnspan=int(self.version_list_len/2),
+                       padx=_pad[0], pady=_pad[1], sticky=tk.W)
 
     def fileopen(self):
+        """Open button."""
         fTyp = [("ubx file","*.ubx")]
         filename = tk.filedialog.askopenfilename(filetypes = fTyp)
         dirname = os.path.dirname(filename)
@@ -63,9 +76,11 @@ class Application(tk.Frame):
             th.start()
 
     def convert(self, filename):
+        """Convert function called from fileopen."""
         # 世代選択
         ublox_generation = self.var.get()
-        exec("ubx_messages = ublox.ubx_messages_" + str(ublox_generation), globals())
+        exec("ubx_messages = ublox.ubx_messages_" + str(ublox_generation),
+             globals())
 
         # データ保存用のインスタンスを生成
         for ubx_message in ubx_messages.values():
@@ -137,15 +152,23 @@ class Application(tk.Frame):
                             checksum_error_count += 1
                         else:
                             if ubx_class_id in ubx_messages: # class, idが見つかった場合
-                                exec(ubx_messages[ubx_class_id][0] + ".append(dat[4:])")
-                                convert_count += 1
+                                if len(dat[4:]) == 0:
+                                    fobjlog.write("No data contained: ubx count={0:,}, class/id=0x{1:02X}, length={2:,}\n".format(ubx_count, ubx_class_id, ubx_length))
+                                else:
+                                    exec(ubx_messages[ubx_class_id][0] + ".append(dat[4:])")
+                                    convert_count += 1
                             else: # class, idが見つからなかった場合
                                 fobjlog.write("Message class/id not found: ubx count={0:,}, class/id=0x{1:02X}, length={2:,}\n".format(ubx_count, ubx_class_id, ubx_length))
                         message_count = 0
 
                 self.status_str.set(u"Writing csv files.")
+                print("Saved UBX Messages")
                 for ubx_class_id in ubx_messages:
-                    exec(ubx_messages[ubx_class_id][0] + ".save_csv('" + ubx_messages[ubx_class_id][0] + ".csv')")
+                    try:
+                        print(f"Done: 0x{ubx_class_id:X}")
+                        exec(ubx_messages[ubx_class_id][0] + ".save_csv('" + ubx_messages[ubx_class_id][0] + ".csv')")
+                    except:
+                        print(f"Error: 0x{ubx_class_id:X}")
 
                 self.status_str.set(u"Writing log file.")
                 fobjlog.write("\nSummary of the conversion\n")
