@@ -127,7 +127,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-execute_pyinstaller_bat_with_Anaconda_Prompt
-ubx2CSV_pyinstaller.bat
-CUI/
+
 ubx2CSV.bat
+
+# nuitka
+*.exe
+*.build
+*.dist
+*.onefile-build
+*.bat
