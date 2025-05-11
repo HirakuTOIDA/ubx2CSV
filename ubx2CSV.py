@@ -79,12 +79,15 @@ class Application(tk.Frame):
         """Convert function called from fileopen."""
         # 世代選択
         ublox_generation = self.var.get()
-        exec("ubx_messages = ublox.ubx_messages_" + str(ublox_generation),
-             globals())
+        # UBXメッセージ一覧を取得
+        ubx_messages = getattr(ublox, "ubx_messages_" + str(ublox_generation))
 
-        # データ保存用のインスタンスを生成
-        for ubx_message in ubx_messages.values():
-            exec(ubx_message[0] + " = ublox.ublox(ubx_message)")
+        # UBXインスタンスを格納する辞書
+        ubx_instances = {}
+
+        # 各UBXメッセージに対してインスタンス生成
+        for msg_key, msg_def in ubx_messages.items():
+            ubx_instances[msg_key] = ublox.ublox(msg_def)
 
         with open(filename, 'rb') as fobj:
             with open("ubx2CSV.log", 'w') as fobjlog:
@@ -147,37 +150,37 @@ class Application(tk.Frame):
                             pb_previous = pb_current
                         checksum_data = int.from_bytes(h_data, 'little')
                         if checksum_data != ch:
-                            fobjlog.write("Checksum error: ubx count={0:,}, class/id=0x{1:02X}, length={2:,}, checksum data=0x{3:04X}, checksum calculated=0x{4:04X}\n".format(ubx_count, ubx_class_id, ubx_length, checksum_data, ch))
+                            fobjlog.write(f"Checksum error: ubx count={ubx_count:,}, class/id=0x{ubx_class_id:04X}, length={ubx_length:,}, checksum data=0x{checksum_data:04X}, checksum calculated=0x{ch:04X}\n")
                             # @todo 戻る?
                             checksum_error_count += 1
                         else:
                             if ubx_class_id in ubx_messages: # class, idが見つかった場合
                                 if len(dat[4:]) == 0:
-                                    fobjlog.write("No data contained: ubx count={0:,}, class/id=0x{1:02X}, length={2:,}\n".format(ubx_count, ubx_class_id, ubx_length))
+                                    fobjlog.write(f"No data contained: ubx count={ubx_count:,}, class/id=0x{ubx_class_id:04X}, length={ubx_length:,}\n")
                                 else:
-                                    exec(ubx_messages[ubx_class_id][0] + ".append(dat[4:])")
+                                    ubx_instances[ubx_class_id].append(dat[4:])
                                     convert_count += 1
                             else: # class, idが見つからなかった場合
-                                fobjlog.write("Message class/id not found: ubx count={0:,}, class/id=0x{1:02X}, length={2:,}\n".format(ubx_count, ubx_class_id, ubx_length))
+                                fobjlog.write(f"Message class/id not found: ubx count={ubx_count:,}, class/id=0x{ubx_class_id:04X}, length={ubx_length:,}\n")
                         message_count = 0
 
                 self.status_str.set(u"Writing csv files.")
                 print("Saved UBX Messages")
                 for ubx_class_id in ubx_messages:
                     try:
-                        print(f"Done: 0x{ubx_class_id:X}")
-                        exec(ubx_messages[ubx_class_id][0] + ".save_csv('" + ubx_messages[ubx_class_id][0] + ".csv')")
+                        ubx_instances[ubx_class_id].save_csv(f"{ubx_messages[ubx_class_id][0]}.csv")
+                        print(f"0x{ubx_class_id:04X}: Done")
                     except:
-                        print(f"Error: 0x{ubx_class_id:X}")
+                        print(f"0x{ubx_class_id:04X}: Error")
 
                 self.status_str.set(u"Writing log file.")
                 fobjlog.write("\nSummary of the conversion\n")
-                fobjlog.write("Source: " + filename + "\n")
-                fobjlog.write("Filesize:  {0:,}".format(filesize) + " bytes\n")
-                fobjlog.write("Read data: {0:,}".format(read_count) + " bytes\n")
-                fobjlog.write("ubx messages found:     {0:,}".format(ubx_count) + "\n")
-                fobjlog.write("ubx messages converted: {0:,}".format(convert_count) + "\n")
-                fobjlog.write("checksum error count: {0:,}".format(checksum_error_count) + "\n")
+                fobjlog.write(f"Source: {filename}\n")
+                fobjlog.write(f"Filesize:  {filesize:,} bytes\n")
+                fobjlog.write(f"Read data: {read_count:,} bytes\n")
+                fobjlog.write(f"ubx messages found:     {ubx_count:,}\n")
+                fobjlog.write(f"ubx messages converted: {convert_count:,}\n")
+                fobjlog.write(f"checksum error count: {checksum_error_count:,}\n")
 
                 self.status_str.set(u"Done.")
                 self.bt.configure(state = tk.NORMAL)

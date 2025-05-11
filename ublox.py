@@ -1526,6 +1526,9 @@ class ublox():
             scalings = np.array(scalings)
         raw_data = struct.unpack("<" + payload_format, dat)
         raw_data = np.array(raw_data)
+        if (scalings == np.ones(len(scalings))).all():
+            scaled_data = raw_data
+        else:
         scaled_data = raw_data * scalings
         return scaled_data
     def append(self, dat):
