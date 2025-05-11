@@ -128,11 +128,13 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-ubx2CSV.bat
-
 # nuitka
 *.exe
 *.build
 *.dist
 *.onefile-build
 *.bat
+
+# for develop
+ubx2CSV.bat
+TestData/
