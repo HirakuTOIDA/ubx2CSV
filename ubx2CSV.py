@@ -27,7 +27,7 @@ class Application(tk.Frame):
                       padx=_pad[0], pady=_pad[1], sticky=tk.W)
 
         # ラジオボタン
-        self.var = tkinter.IntVar()
+        self.var = tk.IntVar()
         self.var.set(9)
         self.rbs = [tk.Radiobutton(self, value=6+i, variable=self.var, text=self.version_list[i]) for i in range(self.version_list_len)]
         [self.rbs[i].grid(row=1, column=i, columnspan=1, padx=_pad[0], pady=_pad[1], sticky=tk.W) for i in range(self.version_list_len)]
