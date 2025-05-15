@@ -1556,9 +1556,7 @@ class ublox():
             payload_number_var = int((dat_size-self.payload_length_fix)/self.payload_length_var)
             payload_format_var = self._conv(self.payload_format_var) * payload_number_var
             payload_format += payload_format_var
-            scalings_var = self.scalings_var * payload_number_var
-            scalings += scalings_var
-            scalings = np.array(scalings)
+            scalings = np.concatenate((scalings, self.scalings_var * payload_number_var))
         raw_data = struct.unpack("<" + payload_format, dat)
         raw_data = np.array(raw_data)
         if (scalings == np.ones(len(scalings))).all():
