@@ -88,11 +88,14 @@ class Application(tk.Frame):
 
         # 各UBXメッセージに対してインスタンス生成
         for msg_key, msg_def in ubx_messages.items():
-            ubx_instances[msg_key] = ublox.ublox(msg_def)
 
         with open(filename, 'rb') as fobj:
             with open("ubx2CSV.log", 'w') as fobjlog:
                 self.filename_str.set(u"File name: " + filename)
+            try:
+                ubx_instances[msg_key] = ublox.ublox(msg_def)
+            except:
+                print("Error in ublox class generation")
                 filesize = os.path.getsize(filename)
                 self.filesize_str.set(u"File size: {0:,} byte".format(filesize))
                 self.status_str.set(u"File opened.")
@@ -159,10 +162,13 @@ class Application(tk.Frame):
                                 if len(dat[4:]) == 0:
                                     fobjlog.write(f"No data contained: ubx count={ubx_count:,}, class/id=0x{ubx_class_id:04X}, length={ubx_length:,}\n")
                                 else:
-                                    ubx_instances[ubx_class_id].append(dat[4:])
-                                    convert_count += 1
                             else: # class, idが見つからなかった場合
                                 fobjlog.write(f"Message class/id not found: ubx count={ubx_count:,}, class/id=0x{ubx_class_id:04X}, length={ubx_length:,}\n")
+                                    try:
+                                        ubx_instances[ubx_class_id].append(dat[4:])
+                                        convert_count += 1
+                                    except:
+                                        print(f"Error in appending ublox message.")
                         message_count = 0
 
                 self.status_str.set(u"Writing csv files.")
