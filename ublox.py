@@ -1580,6 +1580,6 @@ def checksum(dat):
     ck_a = 0
     ck_b = 0
     for dat_ele in dat:
-        ck_a = ck_a + dat_ele
-        ck_b = ck_b + ck_a
-    return (ck_a % 256) + (ck_b % 256) * 256
+        ck_a = (ck_a + dat_ele) & 0xFF
+        ck_b = (ck_b + ck_a) & 0xFF
+    return ck_a + ck_b * 256
