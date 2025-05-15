@@ -1549,8 +1549,8 @@ class ublox():
         }
         return _RE.sub(lambda m: _MAP[m.group(0)], format_string)
     def unpack(self, dat):
-        scalings = copy.copy(self.scalings_fix)
         payload_format = self._conv(self.payload_format_fix)
+        scalings = np.asarray(self.scalings_fix, dtype=float)
         if self.payload_length_var != 0:
             dat_size = len(dat)
             payload_number_var = int((dat_size-self.payload_length_fix)/self.payload_length_var)
