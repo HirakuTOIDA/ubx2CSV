@@ -1528,9 +1528,9 @@ class ublox():
     def __init__(self, message_description):
         self.payload = []
         self.message_class_id = message_description[0]
-        self.paylaod_length_fix = message_description[1]
+        self.payload_length_fix = message_description[1]
         self.payload_format_fix = message_description[2]
-        self.paylaod_length_var = message_description[3]
+        self.payload_length_var = message_description[3]
         self.payload_format_var = message_description[4]
         self.scalings_fix = message_description[5]
         self.csv_header_fix = message_description[6]
@@ -1546,10 +1546,10 @@ class ublox():
     def unpack(self, dat):
         payload_format = self.convert_payload_format(self.payload_format_fix)
         scalings = copy.copy(self.scalings_fix)
-        if self.paylaod_length_var != 0:
+        if self.payload_length_var != 0:
             dat_size = len(dat)
-            payload_number_var = int((dat_size-self.paylaod_length_fix)/self.paylaod_length_var)
             payload_format_var = self.convert_payload_format(self.payload_format_var) * payload_number_var
+            payload_number_var = int((dat_size-self.payload_length_fix)/self.payload_length_var)
             payload_format += payload_format_var
             scalings_var = self.scalings_var * payload_number_var
             scalings += scalings_var
@@ -1569,7 +1569,7 @@ class ublox():
             df = pd.DataFrame(self.payload)
             df_columns_len = len(df.columns)
             header = self.csv_header_fix
-            if self.paylaod_length_var != 0:
+            if self.payload_length_var != 0:
                 headers_number_var = int((df_columns_len - len(self.csv_header_fix)) / len(self.csv_header_var))
                 header += self.csv_header_var * headers_number_var
             header[0] = "# " + header[0]
