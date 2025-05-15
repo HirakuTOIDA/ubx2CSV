@@ -68,7 +68,8 @@ class Application(tk.Frame):
         fTyp = [("ubx file","*.ubx")]
         filename = tk.filedialog.askopenfilename(filetypes = fTyp)
         dirname = os.path.dirname(filename)
-        os.chdir(dirname)
+        if filename:
+            os.chdir(dirname)
         if len(filename) > 0:
             self.bt.configure(state = tk.DISABLED)
             self.status_str.set(u"File selected.")
