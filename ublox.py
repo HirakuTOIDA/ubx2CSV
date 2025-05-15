@@ -1562,7 +1562,7 @@ class ublox():
         if (scalings == np.ones(len(scalings))).all():
             scaled_data = raw_data
         else:
-        scaled_data = raw_data * scalings
+            scaled_data = raw_data * scalings
         return scaled_data
     def append(self, dat):
         py_data = self.unpack(dat)
