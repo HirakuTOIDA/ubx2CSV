@@ -1573,7 +1573,7 @@ class ublox():
         if len(self.payload) > 0:
             df = pd.DataFrame(self.payload)
             df_columns_len = len(df.columns)
-            header = self.csv_header_fix
+            header = self.csv_header_fix.copy()
             if self.payload_length_var != 0:
                 headers_number_var = int((df_columns_len - len(self.csv_header_fix)) / len(self.csv_header_var))
                 header += self.csv_header_var * headers_number_var
