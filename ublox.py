@@ -3,6 +3,7 @@ import struct
 import numpy as np
 import pandas as pd
 import copy
+import re
 
 ubx_sync_char = [0xB5, 0x62]
 
@@ -1536,20 +1537,24 @@ class ublox():
         self.csv_header_fix = message_description[6]
         self.scalings_var = message_description[7]
         self.csv_header_var = message_description[8]
-    def convert_payload_format(self, format_string):
-        out1 = format_string.replace("U1", "B").replace("I1", "b").replace("X1", "B")
-        out2 = out1.replace("U2", "H").replace("I2", "h").replace("X2", "H")
-        out4 = out2.replace("U4", "I").replace("I4", "i").replace("X4", "I")
-        outf = out4.replace("R4", "f").replace("R8", "d")
-        out = outf.replace("CH", "c")
-        return out
+
+    def _conv(self, format_string: str) -> str:
+        _RE = re.compile(r'CH|R8|R4|U4|I4|X4|U2|I2|X2|U1|I1|X1')
+        _MAP = {
+            "U1":"B", "I1":"b", "X1":"B",
+            "U2":"H", "I2":"h", "X2":"H",
+            "U4":"I", "I4":"i", "X4":"I",
+            "R4":"f", "R8":"d",
+            "CH":"c"
+        }
+        return _RE.sub(lambda m: _MAP[m.group(0)], format_string)
     def unpack(self, dat):
-        payload_format = self.convert_payload_format(self.payload_format_fix)
         scalings = copy.copy(self.scalings_fix)
+        payload_format = self._conv(self.payload_format_fix)
         if self.payload_length_var != 0:
             dat_size = len(dat)
-            payload_format_var = self.convert_payload_format(self.payload_format_var) * payload_number_var
             payload_number_var = int((dat_size-self.payload_length_fix)/self.payload_length_var)
+            payload_format_var = self._conv(self.payload_format_var) * payload_number_var
             payload_format += payload_format_var
             scalings_var = self.scalings_var * payload_number_var
             scalings += scalings_var
