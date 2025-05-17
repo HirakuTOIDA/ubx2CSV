@@ -125,7 +125,7 @@ class Application(tk.Frame):
         # 各UBXメッセージに対してインスタンス生成
         for msg_key, msg_def in ubx_messages.items():
             try:
-                ubx_instances[msg_key] = ublox.ublox(msg_def)
+                ubx_instances[msg_key] = ublox.Ublox(msg_def)
             except:
                 print("Error in ublox class generation")
 
@@ -209,7 +209,8 @@ class Application(tk.Frame):
                                     try:
                                         ubx_instances[ubx_class_id].append(dat[4:])
                                         convert_count += 1
-                                    except:
+                                    except Exception as e:
+                                        print(e)
                                         print(f"Error in appending ublox message.")
                             else:  # class, idが見つからなかった場合
                                 fobjlog.write(
@@ -222,11 +223,11 @@ class Application(tk.Frame):
                 for ubx_class_id in ubx_messages:
                     try:
                         ubx_instances[ubx_class_id].save_csv(
-                            f"{ubx_messages[ubx_class_id][0]}.csv"
+                            f"{ubx_messages[ubx_class_id].name}.csv"
                         )
-                        print(f"0x{ubx_class_id:04X}: Done")
-                    except:
-                        print(f"0x{ubx_class_id:04X}: Error")
+                        print(f"0x{ubx_class_id:04X} {ubx_messages[ubx_class_id].name}: Done")
+                    except Exception as e:
+                        print(f"0x{ubx_class_id:04X} {ubx_messages[ubx_class_id].name}: {e}")
 
                 self.status_str.set("Writing log file.")
                 fobjlog.write("\nSummary of the conversion\n")
