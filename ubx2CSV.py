@@ -151,14 +151,14 @@ class Application(tk.Frame):
                         read_count += len(h_data)
                         if len(h_data) < 1:
                             break
-                        if h_data == ublox.ubx_sync_char[0].to_bytes(1, "big"):
+                        if h_data == ublox.UBX_SYNC[0].to_bytes(1, "big"):
                             message_count += 1
                     elif message_count == 1:  # ヘッダのチェック 2
                         h_data = fobj.read(1)  # 1バイトずつ
                         read_count += len(h_data)
                         if len(h_data) < 1:
                             break
-                        if h_data == ublox.ubx_sync_char[1].to_bytes(1, "big"):
+                        if h_data == ublox.UBX_SYNC[1].to_bytes(1, "big"):
                             ubx_count += 1
                             message_count += 1
                         else:
