@@ -6,7 +6,7 @@ import threading
 import tkinter as tk
 import tkinter.filedialog
 import ublox
-
+import model
 
 class Application(tk.Frame):
     """class for GUI."""
@@ -117,7 +117,7 @@ class Application(tk.Frame):
         # 世代選択
         ublox_generation = self.var.get()
         # UBXメッセージ一覧を取得
-        ubx_messages = getattr(ublox, "ubx_messages_" + str(ublox_generation))
+        ubx_messages = getattr(model, "ubx_messages_" + str(ublox_generation))
 
         # UBXインスタンスを格納する辞書
         ubx_instances = {}
