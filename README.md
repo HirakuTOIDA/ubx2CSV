@@ -1,4 +1,6 @@
-# ubx2CSV
+# [deprecated] ubx2CSV
+Use [PyUBX2-CSV-Converter-GUI](https://github.com/HirakuTOIDA/PyUBX2-CSV-Converter-GUI) instead.
+
 Data conversion script for u-blox GNSS receivers.
 Generations 6, 7, 8, and 9 are supported.
 See ublox.py for supported messages.
