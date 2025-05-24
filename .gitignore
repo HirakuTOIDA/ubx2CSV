@@ -138,3 +138,5 @@ dmypy.json
 # for develop
 ubx2CSV.bat
 TestData/
+*.toml
+*.out
